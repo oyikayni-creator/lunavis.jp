@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -1307,7 +1308,9 @@ footer {
             刑法ポーカー
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
           </a>
-          　刑法ポーカー2
+        </div>
+        <div class="shop-products">
+            刑法ポーカー2
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
           </a>
         </div>
@@ -1581,18 +1584,42 @@ function handleSubmit() {
   btn.disabled = true;
   btn.textContent = '送信中...';
 
-  setTimeout(() => {
-    result.className = 'form-note success';
-    result.textContent = 'お問い合わせを受け付けました。ありがとうございます。';
-    btn.textContent = '送信済み';
-    name.value = '';
-    email.value = '';
-    message.value = '';
-    setTimeout(() => {
+  const formData = new FormData();
+  formData.append('name', name.value.trim());
+  formData.append('email', email.value.trim());
+  formData.append('message', message.value.trim());
+
+  fetch('https://tsukifunemira.sakura.ne.jp/contact.php', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      result.className = 'form-note success';
+      result.textContent = 'お問い合わせを受け付けました。ありがとうございます。';
+      btn.textContent = '送信済み';
+      name.value = '';
+      email.value = '';
+      message.value = '';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = '送信する';
+      }, 3000);
+    } else {
+      result.className = 'form-note error';
+      result.textContent = '送信に失敗しました。時間をおいて再度お試しください。';
       btn.disabled = false;
       btn.textContent = '送信する';
-    }, 3000);
-  }, 800);
+    }
+  })
+  .catch(() => {
+    result.className = 'form-note error';
+    result.textContent = '送信に失敗しました。時間をおいて再度お試しください。';
+    btn.disabled = false;
+    btn.textContent = '送信する';
+  });
+
 }
 </script>
 </body>
